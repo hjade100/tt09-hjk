@@ -14,7 +14,7 @@ module tb;
   wire [7:0] uio_oe;
 
   // Instantiate the Device Under Test (DUT)
-  tt_um_lif dut (
+  tt_um_liaf dut (
     .ui_in(ui_in),
     .uo_out(uo_out),
     .uio_out(uio_out),
