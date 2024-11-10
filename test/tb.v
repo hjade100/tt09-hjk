@@ -1,23 +1,22 @@
-`timescale 1ns/1ps
+`timescale 1ns / 1ps
 
 module tb;
 
-  // Declare signals for the DUT (Device Under Test) connections
-  reg ui_in;
+  // 8-bit Inputs and Outputs
+  reg [7:0] ui_in;
   reg clk;
   reg rst_n;
   reg ena;
-  wire uo_out;
-  wire uio_in;
-  wire uio_out;
-  wire uio_oe;
 
-  // Instantiate the DUT
-  // Ensure that the module name and signal connections match your design
-  tt_um_lif uut (
+  // 8-bit Outputs
+  wire [7:0] uo_out;
+  wire [7:0] uio_out;
+  wire [7:0] uio_oe;
+
+  // Instantiate the Device Under Test (DUT)
+  tt_um_lif dut (
     .ui_in(ui_in),
     .uo_out(uo_out),
-    .uio_in(uio_in),
     .uio_out(uio_out),
     .uio_oe(uio_oe),
     .ena(ena),
@@ -28,35 +27,34 @@ module tb;
   // Clock generation
   initial begin
     clk = 0;
-    forever #5 clk = ~clk;  // Generate a clock with a period of 10 time units
+    forever #5 clk = ~clk;  // 100MHz clock
   end
 
-  // Test procedure
+  // Test sequence
   initial begin
-    // Initialize signals
-    ui_in = 0;
+    // Initialize inputs
+    ui_in = 8'b00000000;
+    ena = 1;
     rst_n = 0;
-    ena = 0;
 
-    // Reset pulse
-    #10 rst_n = 1;
-    #10 rst_n = 0;
+    // Apply reset
     #10 rst_n = 1;
 
-    // Test scenario
-    #20 ena = 1;   // Enable the DUT
-    #20 ui_in = 1; // Set input to test output response
-    #50 ui_in = 0;
-    #20 ena = 0;   // Disable the DUT
+    // Apply input stimulus after reset is released
+    #10 ui_in = 8'b00001111;
+    #20 ui_in = 8'b11110000;
+    #20 ui_in = 8'b10101010;
 
-    #100 $finish;  // End simulation
+    // Finish the test after some time
+    #100 $finish;
   end
 
-  // Monitor signals
+  // Monitor output for debugging
   initial begin
-    $monitor("Time = %0t | clk = %b | rst_n = %b | ena = %b | ui_in = %b | uo_out = %b", 
-              $time, clk, rst_n, ena, ui_in, uo_out);
+    $monitor("Time = %0t | clk = %b | rst_n = %b | ena = %b | ui_in = %b | uo_out = %b | uio_out = %b",
+             $time, clk, rst_n, ena, ui_in, uo_out, uio_out);
   end
 
 endmodule
+
 
