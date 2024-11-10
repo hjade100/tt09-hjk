@@ -25,6 +25,6 @@ end
 assign next_state = current + (state >> 1);
 
 // spiking logic
-assign spike = (state >= threshold)
+assign spike = (state >= threshold);
 
 endmodule
